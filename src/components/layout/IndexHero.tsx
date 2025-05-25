@@ -18,35 +18,35 @@ interface MediaItem {
 // Sample media items - these would typically come from a CMS or API
 const mediaItems: MediaItem[] = [
   {
-    src: '/media/home_hero_slider/342-136015993_small.mp4',
+    src: '/media/index_hero_slider/342-136015993_small.mp4',
     type: 'video',
   },
   {
-    src: '/media/home_hero_slider/18528-293467377_small.mp4',
+    src: '/media/index_hero_slider/18528-293467377_small.mp4',
     type: 'video',
   },
   {
-    src: '/media/home_hero_slider/46033-447095322_small.mov',
+    src: '/media/index_hero_slider/46033-447095322_small.mov',
     type: 'video',
   },
   {
-    src: '/media/home_hero_slider/213148_large.mp4',
+    src: '/media/index_hero_slider/213148_large.mp4',
     type: 'video',
   },
   {
-    src: '/media/home_hero_slider/214267_tiny.mp4',
+    src: '/media/index_hero_slider/214267_tiny.mp4',
     type: 'video',
   },
   {
-    src: '/media/home_hero_slider/241743_small.mp4',
+    src: '/media/index_hero_slider/241743_small.mp4',
     type: 'video',
   },
   {
-    src: '/media/home_hero_slider/18528-293467377_small.mp4',
+    src: '/media/index_hero_slider/18528-293467377_small.mp4',
     type: 'video',
   },
   {
-    src: '/media/home_hero_slider/45301-442657794_tiny.mp4',
+    src: '/media/index_hero_slider/45301-442657794_tiny.mp4',
     type: 'video',
   },
 ];
