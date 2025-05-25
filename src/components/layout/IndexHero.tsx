@@ -58,7 +58,7 @@ interface HeroSliderProps {
   ctaLink: string;
 }
 
-const HeroSlider = ({ title, subtitle, ctaText, ctaLink }: HeroSliderProps) => {
+const IndexHero = ({ title, subtitle, ctaText, ctaLink }: HeroSliderProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -230,4 +230,4 @@ const HeroSlider = ({ title, subtitle, ctaText, ctaLink }: HeroSliderProps) => {
   );
 };
 
-export default HeroSlider; 
+export default IndexHero; 

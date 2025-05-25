@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import HeroSlider from '@/components/HeroSlider';
+import IndexHero from '@/components/layout/IndexHero';
 
 // Animation components
 interface FadeInProps {
@@ -104,7 +104,7 @@ export default function Home() {
   return (
     <main>
       {/* Hero Section with Video Slider */}
-      <HeroSlider 
+      <IndexHero 
         title="Welcome to One Golf Club"
         subtitle="The ultimate private members club offering premium playing privileges across over 50 golf courses under one membership"
         ctaText="Become a Member"

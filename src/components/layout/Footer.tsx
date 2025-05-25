@@ -1,215 +1,187 @@
 'use client';
-import React from 'react';
+
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { FaFacebookF, FaInstagram, FaPinterestP, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import Image from 'next/image';
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 
-export default function Footer() {
-  const currentYear = new Date().getFullYear();
-  
-  const footerAnimation = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: 0.1,
-        duration: 0.5,
-      },
-    },
-  };
-
-  const footerAnimationDelayed = (delay: number) => ({
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay,
-        duration: 0.5,
-      },
-    },
-  });
-
+const Footer = () => {
   return (
-    <footer className="bg-primary text-white">
-      <div className="container mx-auto px-4">
-        {/* Main footer content */}
-        <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Column 1: About */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={footerAnimation}
-          >
-            <h3 className="text-xl font-serif font-medium mb-6">Bookham Kitchens</h3>
-            <p className="text-gray-300 mb-4">
-              Family-run kitchen design and installation specialists in Surrey, providing bespoke solutions tailored to your needs.
+    <footer className="bg-gray-900 text-white relative overflow-hidden">
+      {/* Subtle pattern overlay */}
+      <div className="absolute inset-0 bg-hero-pattern opacity-5 mix-blend-overlay pointer-events-none"></div>
+      
+      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+          <div className="space-y-6">
+            <div className="flex items-center">
+              <Image
+                src="/media/logo-icon_only.png"
+                alt="One Golf Club Logo"
+                width={60}
+                height={60}
+                className="mr-3"
+              />
+              <div>
+                <h2 className="text-xl font-display font-semibold text-golf-gold-400">One Golf Club</h2>
+                <p className="text-golf-cream-200 text-sm">Premium Golf Experience</p>
+              </div>
+            </div>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              One Golf Club is the ultimate private members club and event management company, offering playing privileges across over 50 golf courses under one membership.
             </p>
-            <div className="flex space-x-4 mt-6">
-              <a 
-                href="https://facebook.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="bg-white/10 hover:bg-white/20 transition-colors p-2 rounded-full"
-              >
-                <FaFacebookF className="h-4 w-4" />
+            <div className="flex space-x-4">
+              <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" 
+                 className="w-9 h-9 rounded-full flex items-center justify-center bg-gray-800 text-golf-gold-400 hover:bg-golf-gold-500 hover:text-white transition-all duration-300">
+                <FaFacebookF size={16} />
               </a>
-              <a 
-                href="https://instagram.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="bg-white/10 hover:bg-white/20 transition-colors p-2 rounded-full"
-              >
-                <FaInstagram className="h-4 w-4" />
+              <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer" 
+                 className="w-9 h-9 rounded-full flex items-center justify-center bg-gray-800 text-golf-gold-400 hover:bg-golf-gold-500 hover:text-white transition-all duration-300">
+                <FaTwitter size={16} />
               </a>
-              <a 
-                href="https://pinterest.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="bg-white/10 hover:bg-white/20 transition-colors p-2 rounded-full"
-              >
-                <FaPinterestP className="h-4 w-4" />
+              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" 
+                 className="w-9 h-9 rounded-full flex items-center justify-center bg-gray-800 text-golf-gold-400 hover:bg-golf-gold-500 hover:text-white transition-all duration-300">
+                <FaInstagram size={16} />
+              </a>
+              <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" 
+                 className="w-9 h-9 rounded-full flex items-center justify-center bg-gray-800 text-golf-gold-400 hover:bg-golf-gold-500 hover:text-white transition-all duration-300">
+                <FaLinkedinIn size={16} />
               </a>
             </div>
-          </motion.div>
+          </div>
           
-          {/* Column 2: Services */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={footerAnimationDelayed(0.2)}
-          >
-            <h3 className="text-xl font-serif font-medium mb-6">Services</h3>
-            <ul className="space-y-3">
+          <div>
+            <h3 className="text-golf-gold-400 font-display text-lg font-medium mb-5">Club Links</h3>
+            <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/kitchens/fitted" className="text-gray-300 hover:text-accent transition-colors">
-                  Fitted Kitchens
+                <Link href="/membership" className="text-gray-300 hover:text-golf-gold-300 transition-colors duration-300 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-golf-gold-500 mr-2"></span>
+                  Membership Options
                 </Link>
               </li>
               <li>
-                <Link href="/kitchens/replacement-doors" className="text-gray-300 hover:text-accent transition-colors">
-                  Replacement Doors
+                <Link href="/courses" className="text-gray-300 hover:text-golf-gold-300 transition-colors duration-300 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-golf-gold-500 mr-2"></span>
+                  Our Courses
                 </Link>
               </li>
               <li>
-                <Link href="/kitchens/cabinet-spray-painting" className="text-gray-300 hover:text-accent transition-colors">
-                  Cabinet Spray Painting
+                <Link href="/corporate" className="text-gray-300 hover:text-golf-gold-300 transition-colors duration-300 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-golf-gold-500 mr-2"></span>
+                  Corporate Hospitality
                 </Link>
               </li>
               <li>
-                <Link href="/home-living/bedroom-cabinets" className="text-gray-300 hover:text-accent transition-colors">
-                  Bedroom Cabinets
+                <Link href="/society-days" className="text-gray-300 hover:text-golf-gold-300 transition-colors duration-300 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-golf-gold-500 mr-2"></span>
+                  Society Days
                 </Link>
               </li>
               <li>
-                <Link href="/home-living/home-office" className="text-gray-300 hover:text-accent transition-colors">
-                  Home Office
+                <Link href="/news" className="text-gray-300 hover:text-golf-gold-300 transition-colors duration-300 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-golf-gold-500 mr-2"></span>
+                  Club News
                 </Link>
               </li>
               <li>
-                <Link href="/building-services/kitchen-installation" className="text-gray-300 hover:text-accent transition-colors">
-                  Kitchen Installation
+                <Link href="/events" className="text-gray-300 hover:text-golf-gold-300 transition-colors duration-300 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-golf-gold-500 mr-2"></span>
+                  Events Calendar
                 </Link>
               </li>
             </ul>
-          </motion.div>
+          </div>
           
-          {/* Column 3: Quick Links */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={footerAnimationDelayed(0.3)}
-          >
-            <h3 className="text-xl font-serif font-medium mb-6">Quick Links</h3>
-            <ul className="space-y-3">
+          <div>
+            <h3 className="text-golf-gold-400 font-display text-lg font-medium mb-5">Information</h3>
+            <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/portfolio" className="text-gray-300 hover:text-accent transition-colors">
-                  Portfolio
+                <Link href="/about" className="text-gray-300 hover:text-golf-gold-300 transition-colors duration-300 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-golf-gold-500 mr-2"></span>
+                  About OGC
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-gray-300 hover:text-accent transition-colors">
-                  About Us
+                <Link href="/concept" className="text-gray-300 hover:text-golf-gold-300 transition-colors duration-300 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-golf-gold-500 mr-2"></span>
+                  OGC Concept
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-gray-300 hover:text-accent transition-colors">
-                  Blog
+                <Link href="/members-pages" className="text-gray-300 hover:text-golf-gold-300 transition-colors duration-300 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-golf-gold-500 mr-2"></span>
+                  Members' Pages
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-300 hover:text-accent transition-colors">
-                  Contact
+                <Link href="/terms-conditions" className="text-gray-300 hover:text-golf-gold-300 transition-colors duration-300 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-golf-gold-500 mr-2"></span>
+                  Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="text-gray-300 hover:text-accent transition-colors">
+                <Link href="/privacy-policy" className="text-gray-300 hover:text-golf-gold-300 transition-colors duration-300 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-golf-gold-500 mr-2"></span>
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms-of-service" className="text-gray-300 hover:text-accent transition-colors">
-                  Terms of Service
+                <Link href="/contact" className="text-gray-300 hover:text-golf-gold-300 transition-colors duration-300 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-golf-gold-500 mr-2"></span>
+                  Contact Us
                 </Link>
               </li>
             </ul>
-          </motion.div>
+          </div>
           
-          {/* Column 4: Contact */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={footerAnimationDelayed(0.4)}
-          >
-            <h3 className="text-xl font-serif font-medium mb-6">Contact Us</h3>
-            <ul className="space-y-4">
+          <div>
+            <h3 className="text-golf-gold-400 font-display text-lg font-medium mb-5">Head Office</h3>
+            <ul className="space-y-3 text-sm text-gray-300">
+              <li className="flex">
+                <span className="text-golf-gold-400 mr-2">Address:</span>
+                <div>
+                  <p>SBC House</p>
+                  <p>Restmor Way</p>
+                  <p>Wallington</p>
+                  <p>SM6 7AH</p>
+                </div>
+              </li>
               <li className="flex items-start">
-                <FaMapMarkerAlt className="h-5 w-5 text-accent mr-3 mt-1" />
-                <span className="text-gray-300">
-                  25 Church Road, Great Bookham<br />
-                  Leatherhead, Surrey<br />
-                  KT23 3PG
-                </span>
-              </li>
-              <li className="flex items-center">
-                <FaPhoneAlt className="h-4 w-4 text-accent mr-3" />
-                <a href="tel:+441932391183" className="text-gray-300 hover:text-accent transition-colors">
-                  01932 391183
+                <span className="text-golf-gold-400 mr-2">Tel:</span>
+                <a href="tel:02082552030" className="hover:text-golf-gold-300 transition-colors">
+                  020 8255 2030
                 </a>
               </li>
-              <li className="flex items-center">
-                <FaEnvelope className="h-4 w-4 text-accent mr-3" />
-                <a href="mailto:sales@bookhamkitchens.co.uk" className="text-gray-300 hover:text-accent transition-colors">
-                  sales@bookhamkitchens.co.uk
+              <li className="flex items-start">
+                <span className="text-golf-gold-400 mr-2">Mobile:</span>
+                <a href="tel:+447484834266" className="hover:text-golf-gold-300 transition-colors">
+                  +44 7484 834266
                 </a>
+              </li>
+              <li className="flex items-start">
+                <span className="text-golf-gold-400 mr-2">Email:</span>
+                <a href="mailto:info@onegolfclub.co.uk" className="hover:text-golf-gold-300 transition-colors">
+                  info@onegolfclub.co.uk
+                </a>
+              </li>
+              <li className="pt-3">
+                <p className="text-gray-400 text-xs">Company Reg: 10690867</p>
               </li>
             </ul>
-            <div className="mt-6">
-              <h4 className="text-sm font-medium mb-2">Opening Hours</h4>
-              <p className="text-gray-300 text-sm">
-                Monday - Friday: 9:00am - 5:30pm<br />
-                Saturday: 9:00am - 4:00pm<br />
-                Sunday: Closed
-              </p>
-            </div>
-          </motion.div>
+          </div>
         </div>
         
-        {/* Bottom bar */}
-        <div className="py-6 border-t border-white/10 text-sm text-gray-400">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p>© {currentYear} Bookham Kitchens. All rights reserved.</p>
-            <p className="mt-2 md:mt-0">
-              Designed with <span className="text-accent">♥</span> in Surrey
-            </p>
+        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between text-gray-400 text-sm">
+          <p className="mb-4 md:mb-0">&copy; {new Date().getFullYear()} One Golf Club Ltd. All rights reserved.</p>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <Link href="/terms-conditions" className="hover:text-golf-gold-300 transition-colors duration-300">Terms & Conditions</Link>
+            <Link href="/privacy-policy" className="hover:text-golf-gold-300 transition-colors duration-300">Privacy Policy</Link>
+            <Link href="/sitemap.xml" className="hover:text-golf-gold-300 transition-colors duration-300">Sitemap</Link>
+            <span className="text-golf-green-600">100% Green Web</span>
           </div>
         </div>
       </div>
     </footer>
   );
-} 
+};
+
+export default Footer; 

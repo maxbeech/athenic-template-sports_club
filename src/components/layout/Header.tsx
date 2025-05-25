@@ -1,301 +1,425 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+
+import { useState, useEffect, Fragment } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaBars, FaTimes, FaPhone, FaEnvelope } from 'react-icons/fa';
+import { Popover, Transition } from '@headlessui/react';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
-const navItems = [
-  { name: 'Home', path: '/' },
-  { 
-    name: 'Kitchens', 
-    path: '/kitchens',
-    subItems: [
-      { name: 'Fitted Kitchens', path: '/kitchens/fitted' },
-      { name: 'Replacement Doors', path: '/kitchens/replacement-doors' },
-      { name: 'Cabinet Spray Painting', path: '/kitchens/cabinet-spray-painting' },
-      { name: 'Kitchen Design Process', path: '/kitchens/design-process' },
-    ] 
-  },
-  { 
-    name: 'Home Living', 
-    path: '/home-living',
-    subItems: [
-      { name: 'Bedroom Cabinets', path: '/home-living/bedroom-cabinets' },
-      { name: 'Home Office', path: '/home-living/home-office' },
-      { name: 'Bespoke Furniture', path: '/home-living/bespoke-furniture' },
-    ] 
-  },
-  { 
-    name: 'Building Services', 
-    path: '/building-services',
-    subItems: [
-      { name: 'Kitchen Installation', path: '/building-services/kitchen-installation' },
-      { name: 'Home Renovations', path: '/building-services/renovations' },
-      { name: 'Extensions', path: '/building-services/extensions' },
-    ] 
-  },
-  { name: 'Portfolio', path: '/portfolio' },
-  { name: 'About Us', path: '/about' },
-  { name: 'Blog', path: '/blog' },
-  { name: 'Contact', path: '/contact' },
-];
+// Disclosure component for mobile dropdown menus
+interface DisclosureProps {
+  item: {
+    name: string;
+    href: string;
+    children: Array<{ name: string; href: string }>;
+  };
+  pathname: string | null;
+  setIsMobileMenuOpen: (isOpen: boolean) => void;
+}
 
-export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [scrolled, setScrolled] = useState(false);
+const Disclosure = ({ item, pathname, setIsMobileMenuOpen }: DisclosureProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div>
+      <button
+        className={`flex justify-between items-center w-full px-3 py-2 rounded-md text-base font-medium text-left ${
+          pathname?.startsWith(item.href)
+            ? 'bg-golf-green-50 text-golf-green-700'
+            : 'text-gray-800 hover:bg-gray-50 hover:text-golf-green-700'
+        }`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {item.name}
+        <ChevronDownIcon
+          className={`ml-1 h-5 w-5 transform transition-transform duration-200 text-golf-gold-500 ${
+            isOpen ? 'rotate-180' : ''
+          }`}
+        />
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="ml-4 mt-1 space-y-0.5">
+              {item.children.map((subItem) => (
+                <Link
+                  key={subItem.name}
+                  href={subItem.href}
+                  className={`block px-3 py-2 rounded-md text-sm font-medium ${
+                    pathname === subItem.href
+                      ? 'bg-golf-green-50 text-golf-green-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-golf-green-700'
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {subItem.name}
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const Navbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const isHomePage = pathname === '/';
 
-  // Handle scroll effect for the header
+  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 50;
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
-      }
+      setIsScrolled(window.scrollY > 10);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [scrolled]);
+  }, []);
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (isMobileMenuOpen && !target.closest('.mobile-menu-container')) {
+        setIsMobileMenuOpen(false);
+      }
+    };
 
-  const handleDropdownToggle = (name: string) => {
-    setActiveDropdown(activeDropdown === name ? null : name);
-  };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMobileMenuOpen]);
+
+  // Navigation structure with dropdown menus
+  const navigation = [
+    { name: 'Home', href: '/' },
+    {
+      name: 'About', 
+      href: '/about',
+      children: [
+        { name: 'About OGC', href: '/about' },
+        { name: 'Our Concept', href: '/concept' },
+        { name: 'Our Team', href: '/about/team' },
+        { name: 'Testimonials', href: '/about/testimonials' },
+      ],
+    },
+    {
+      name: 'Membership', 
+      href: '/membership',
+      children: [
+        { name: 'Membership Benefits', href: '/membership' },
+        { name: 'Pricing & Tiers', href: '/membership/pricing' },
+        { name: 'Join Now', href: '/membership/join' },
+        { name: 'FAQs', href: '/membership/faqs' },
+      ],
+    },
+    {
+      name: 'Courses', 
+      href: '/courses',
+      children: [
+        { name: 'Course Map', href: '/courses' },
+        { name: 'UK Courses', href: '/courses/uk' },
+        { name: 'International Affiliations', href: '/courses/international' },
+        { name: 'Course Ratings', href: '/courses/ratings' },
+      ],
+    },
+    {
+      name: 'Services', 
+      href: '/services',
+      children: [
+        { name: 'Corporate Hospitality', href: '/services/corporate-hospitality' },
+        { name: 'Society Days', href: '/services/society-days' },
+        { name: 'Event Management', href: '/services/event-management' },
+        { name: 'Golf Concierge', href: '/services/concierge' },
+      ],
+    },
+    { name: 'News', href: '/news' },
+    { name: 'Contact', href: '/contact' },
+  ];
 
   return (
-    <>
-      {/* Top Bar */}
-      <div className="bg-primary text-white py-2 hidden md:block">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center">
-            <div className="text-sm">
-              <p>Family-run bespoke kitchen design & installation services in Surrey</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <a href="tel:+441932391183" className="flex items-center text-sm hover:text-accent transition-colors">
-                <FaPhone className="mr-2 h-3 w-3" />
-                <span>01932 391183</span>
-              </a>
-              <a href="mailto:sales@bookhamkitchens.co.uk" className="flex items-center text-sm hover:text-accent transition-colors">
-                <FaEnvelope className="mr-2 h-3 w-3" />
-                <span>sales@bookhamkitchens.co.uk</span>
-              </a>
-            </div>
+    <nav className="fixed w-full z-50 transition-all duration-300">
+      {/* Secondary Nav - Members Area Links */}
+      <div className={`w-full py-3 transition-colors duration-300 ${
+        isScrolled ? 'bg-golf-gold-50 text-golf-green-800 border-b border-golf-gold-200' : 'bg-golf-green-800 text-white'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end">
+          <div className="hidden lg:flex space-x-8 text-sm font-medium">
+            <Link 
+              href="/membership/enquiries" 
+              className={`transition-colors duration-300 ${
+                isScrolled ? 'hover:text-golf-gold-700' : 'hover:text-golf-gold-300'
+              }`}
+            >
+              Membership Enquiries
+            </Link>
+            <Link 
+              href="/members-pages" 
+              className={`transition-colors duration-300 ${
+                isScrolled ? 'hover:text-golf-gold-700' : 'hover:text-golf-gold-300'
+              }`}
+            >
+              Members' Pages
+            </Link>
+            <Link 
+              href="/members-login" 
+              className={`transition-colors duration-300 ${
+                isScrolled ? 'hover:text-golf-gold-700' : 'hover:text-golf-gold-300'
+              }`}
+            >
+              Members Login
+            </Link>
           </div>
         </div>
       </div>
-
-      {/* Main Header */}
-      <header 
-        className={`bg-white ${scrolled ? 'shadow-md py-2' : 'py-4'} sticky top-0 left-0 w-full z-50 transition-all duration-300`}
-      >
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center">
+      
+      {/* Main Navigation */}
+      <div className={`w-full transition-all duration-300 ${
+        isScrolled || !isHomePage
+          ? 'bg-white/95 backdrop-blur-md shadow-md'
+          : 'bg-transparent'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+          <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center">
-              <Image
-                src="/media/logo.png"
-                alt="Bookham Kitchens Logo"
-                width={180}
-                height={50}
-                className="h-auto"
-                priority
-              />
-            </Link>
+            <motion.div 
+              className="flex-shrink-0 flex items-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Link href="/" className="flex items-center space-x-3">
+                <Image
+                  src="/media/logo-icon_only.png"
+                  alt="One Golf Club Logo"
+                  width={50}
+                  height={50}
+                  className="w-12 h-12"
+                />
+                <div className="flex flex-col">
+                  <span className={`text-xl font-display font-semibold tracking-tight transition-colors duration-300 ${
+                    isScrolled || !isHomePage ? 'text-golf-green-800' : 'text-white'
+                  }`}>
+                    One Golf Club
+                  </span>
+                  <span className={`text-xs font-medium transition-colors duration-300 ${
+                    isScrolled || !isHomePage ? 'text-golf-gold-600' : 'text-golf-gold-300'
+                  }`}>
+                    Premium Golf Experience
+                  </span>
+                </div>
+              </Link>
+            </motion.div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:block">
-              <ul className="flex items-center space-x-6">
-                {navItems.slice(1).map((item) => (
-                  <li key={item.name} className="relative group">
-                    {item.subItems ? (
+            <div className="hidden lg:flex lg:items-center lg:space-x-1">
+              {navigation.map((item) => (
+                !item.children ? (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-300 hover:scale-105 ${
+                      pathname === item.href
+                        ? isScrolled || !isHomePage
+                          ? 'text-golf-green-800 bg-golf-green-50'
+                          : 'text-white bg-white/10 backdrop-blur-sm'
+                        : isScrolled || !isHomePage
+                          ? 'text-gray-800 hover:text-golf-green-700'
+                          : 'text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ) : (
+                  <Popover key={item.name} className="relative">
+                    {({ open }) => (
                       <>
-                        <button
-                          onClick={() => handleDropdownToggle(item.name)}
-                          onMouseEnter={() => setActiveDropdown(item.name)}
-                          onMouseLeave={() => setActiveDropdown(null)}
-                          className={`px-3 py-2 rounded text-sm font-medium transition-colors hover:text-secondary relative
-                            ${pathname.startsWith(item.path) ? 'text-secondary' : 'text-primary'}`}
+                        <Popover.Button
+                          className={`group inline-flex items-center px-3 py-2 text-sm font-medium rounded-md outline-none transition-all duration-300 hover:scale-105 ${
+                            pathname?.startsWith(item.href)
+                              ? isScrolled || !isHomePage
+                                ? 'text-golf-green-800 bg-golf-green-50'
+                                : 'text-white bg-white/10 backdrop-blur-sm'
+                              : isScrolled || !isHomePage
+                                ? 'text-gray-800 hover:text-golf-green-700'
+                                : 'text-white hover:bg-white/10'
+                          }`}
                         >
-                          {item.name}
-                          <span className="ml-1 text-xs opacity-70">▼</span>
-                          
-                          {/* Animated underline */}
-                          {pathname.startsWith(item.path) && (
-                            <motion.div 
-                              className="absolute bottom-0 left-0 h-0.5 bg-secondary"
-                              initial={{ width: 0 }}
-                              animate={{ width: '100%' }}
-                              transition={{ duration: 0.3 }}
-                            />
-                          )}
-                        </button>
-                        <AnimatePresence>
-                          {(activeDropdown === item.name) && (
-                            <motion.div 
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: 10 }}
-                              transition={{ duration: 0.2 }}
-                              className="absolute left-0 mt-1 w-64 rounded-md shadow-custom bg-white z-50 overflow-hidden"
-                              onMouseEnter={() => setActiveDropdown(item.name)}
-                              onMouseLeave={() => setActiveDropdown(null)}
-                            >
-                              <div className="py-2">
-                                {item.subItems.map((subItem) => (
+                          <span>{item.name}</span>
+                          <ChevronDownIcon
+                            className={`ml-1 h-4 w-4 transform transition-transform duration-200 ${
+                              open ? 'rotate-180' : ''
+                            } ${
+                              isScrolled || !isHomePage ? 'text-golf-gold-600' : 'text-golf-gold-300'
+                            }`}
+                            aria-hidden="true"
+                          />
+                        </Popover.Button>
+
+                        <Transition
+                          as={Fragment}
+                          enter="transition ease-out duration-200"
+                          enterFrom="opacity-0 translate-y-1"
+                          enterTo="opacity-100 translate-y-0"
+                          leave="transition ease-in duration-150"
+                          leaveFrom="opacity-100 translate-y-0"
+                          leaveTo="opacity-0 translate-y-1"
+                        >
+                          <Popover.Panel className="absolute z-10 mt-2 w-56 transform px-2 sm:px-0">
+                            <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+                              <div className="relative grid gap-1 bg-white p-2">
+                                {item.children.map((subItem) => (
                                   <Link
                                     key={subItem.name}
-                                    href={subItem.path}
-                                    className={`block px-4 py-3 text-sm hover:bg-accent/10 transition-colors
-                                      ${pathname === subItem.path ? 'text-secondary font-medium bg-accent/5' : 'text-primary'}`}
+                                    href={subItem.href}
+                                    className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-golf-green-50 hover:text-golf-green-700 transition-colors"
                                   >
                                     {subItem.name}
                                   </Link>
                                 ))}
                               </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                            </div>
+                          </Popover.Panel>
+                        </Transition>
                       </>
-                    ) : (
-                      <Link
-                        href={item.path}
-                        className={`px-3 py-2 rounded text-sm font-medium transition-colors hover:text-secondary relative
-                          ${pathname === item.path ? 'text-secondary' : 'text-primary'}`}
-                      >
-                        {item.name}
-                        
-                        {/* Animated underline */}
-                        {pathname === item.path && (
-                          <motion.div 
-                            className="absolute bottom-0 left-0 h-0.5 bg-secondary"
-                            initial={{ width: 0 }}
-                            animate={{ width: '100%' }}
-                            transition={{ duration: 0.3 }}
-                          />
-                        )}
-                      </Link>
                     )}
-                  </li>
-                ))}
-                <li>
-                  <Link 
-                    href="/contact"
-                    className="ml-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary-700 transition-colors text-sm font-medium whitespace-nowrap"
-                  >
-                    Get a Quote
-                  </Link>
-                </li>
-              </ul>
-            </nav>
+                  </Popover>
+                )
+              ))}
+              <Link
+                href="/membership/join"
+                className="ml-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-golf-green-700 hover:bg-golf-green-800 transition-all duration-300 hover:scale-105 shadow-md"
+              >
+                Join Now
+              </Link>
+            </div>
 
             {/* Mobile menu button */}
-            <button
-              className="lg:hidden p-2 rounded-md text-primary hover:text-secondary focus:outline-none"
-              onClick={toggleMobileMenu}
-              aria-label="Toggle mobile menu"
-            >
-              {mobileMenuOpen ? (
-                <FaTimes className="h-6 w-6" />
-              ) : (
-                <FaBars className="h-6 w-6" />
-              )}
-            </button>
+            <div className="flex items-center lg:hidden">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className={`p-2 rounded-md transition-colors duration-300 ${
+                  isScrolled
+                    ? 'text-gray-900 hover:text-golf-green-700'
+                    : 'text-white hover:text-golf-gold-300'
+                }`}
+                aria-expanded={isMobileMenuOpen}
+              >
+                <span className="sr-only">Open main menu</span>
+                <svg
+                  className={`h-6 w-6 ${isMobileMenuOpen ? 'hidden' : 'block'}`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+                <svg
+                  className={`h-6 w-6 ${isMobileMenuOpen ? 'block' : 'hidden'}`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Mobile navigation - update to match desktop changes */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div 
-              className="lg:hidden bg-white shadow-md"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="container mx-auto px-4 py-3 space-y-1">
-                {/* Start mobile navigation from index 1 to skip the redundant Home link */}
-                {navItems.slice(1).map((item) => (
-                  <div key={item.name}>
-                    {item.subItems ? (
-                      <>
-                        <button
-                          onClick={() => handleDropdownToggle(item.name)}
-                          className={`w-full text-left px-3 py-3 rounded text-base font-medium flex justify-between items-center
-                            ${pathname.startsWith(item.path) ? 'text-secondary' : 'text-primary'}`}
-                        >
-                          {item.name}
-                          <span className="ml-1 text-xs">{activeDropdown === item.name ? '▲' : '▼'}</span>
-                        </button>
-                        <AnimatePresence>
-                          {activeDropdown === item.name && (
-                            <motion.div 
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3 }}
-                              className="pl-4 space-y-1 border-l-2 border-accent ml-3 mt-1 mb-2"
-                            >
-                              {item.subItems.map((subItem) => (
-                                <Link
-                                  key={subItem.name}
-                                  href={subItem.path}
-                                  className={`block px-3 py-2 rounded text-base 
-                                    ${pathname === subItem.path ? 'text-secondary font-medium' : 'text-primary/80'}`}
-                                  onClick={toggleMobileMenu}
-                                >
-                                  {subItem.name}
-                                </Link>
-                              ))}
-                              
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </>
-                    ) : (
-                      <Link
-                        href={item.path}
-                        className={`block px-3 py-3 rounded text-base font-medium 
-                          ${pathname === item.path ? 'text-secondary' : 'text-primary'}`}
-                        onClick={toggleMobileMenu}
-                      >
-                        {item.name}
-                      </Link>
-                    )}
-                  </div>
-                ))}
-                <div className="mt-4 pt-4 border-t border-gray-200">
+      {/* Mobile menu panel */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="lg:hidden mobile-menu-container bg-white shadow-lg overflow-hidden"
+          >
+            <div className="px-4 pt-4 pb-6 space-y-2">
+              {navigation.map((item) => (
+                <div key={item.name} className="py-1">
+                  {!item.children ? (
+                    <Link
+                      href={item.href}
+                      className={`block px-3 py-2 rounded-md text-base font-medium ${
+                        pathname === item.href
+                          ? 'bg-golf-green-50 text-golf-green-700'
+                          : 'text-gray-800 hover:bg-gray-50 hover:text-golf-green-700'
+                      }`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  ) : (
+                    <Disclosure item={item} pathname={pathname} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+                  )}
+                </div>
+              ))}
+              <div className="pt-2">
+                <Link
+                  href="/membership/join"
+                  className="block w-full text-center px-4 py-3 rounded-md font-medium bg-golf-green-700 text-white hover:bg-golf-green-800 transition-colors shadow-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Join Now
+                </Link>
+              </div>
+              <div className="pt-4 border-t border-gray-200">
+                <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-sm">
                   <Link
-                    href="/contact"
-                    className="block w-full text-center px-4 py-3 bg-primary text-white rounded hover:bg-primary-700 transition-colors text-base font-medium"
-                    onClick={toggleMobileMenu}
+                    href="/membership/enquiries"
+                    className="text-gray-600 hover:text-golf-gold-700"
+                    onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Get a Quote
+                    Membership Enquiries
                   </Link>
-                  <div className="mt-4 flex flex-col space-y-2">
-                    <a href="tel:+441932391183" className="flex items-center text-sm text-primary hover:text-secondary transition-colors">
-                      <FaPhone className="mr-2 h-3 w-3" />
-                      <span>01932 391183</span>
-                    </a>
-                    <a href="mailto:sales@bookhamkitchens.co.uk" className="flex items-center text-sm text-primary hover:text-secondary transition-colors">
-                      <FaEnvelope className="mr-2 h-3 w-3" />
-                      <span>sales@bookhamkitchens.co.uk</span>
-                    </a>
-                  </div>
+                  <Link
+                    href="/members-pages"
+                    className="text-gray-600 hover:text-golf-gold-700"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Members' Pages
+                  </Link>
+                  <Link
+                    href="/members-login"
+                    className="text-gray-600 hover:text-golf-gold-700"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Members Login
+                  </Link>
                 </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
-    </>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
   );
-} 
+};
+
+export default Navbar; 
